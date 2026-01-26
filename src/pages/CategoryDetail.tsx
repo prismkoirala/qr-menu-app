@@ -74,7 +74,7 @@ export default function CategoryDetail() {
             key={item.id}
             className="bg-carbon-stone/80 rounded-2xl overflow-hidden shadow-xl shadow-black/30 hover:shadow-carbon-fire/20 transition-all duration-300"
           >
-            {item.image && (
+            {/* {item.image && (
               <img
                 src={item.image}
                 alt={item.name}
@@ -83,7 +83,7 @@ export default function CategoryDetail() {
                   (e.target as HTMLImageElement).style.display = 'none'
                 }}
               />
-            )}
+            )} */}
 
             <div className="p-6">
               <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.name}</h3>
