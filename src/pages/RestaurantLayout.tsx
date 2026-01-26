@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Outlet, useParams } from 'react-router-dom'
 import { fetchRestaurant } from '../features/restaurantSlice'
 import type { RootState, AppDispatch } from '../store'
+import ScrollToTop from '../components/ScrollToTop'
 // import Header from '../components/Header'  // your existing header with logo & socials
 
 export default function RestaurantLayout() {
@@ -44,12 +45,15 @@ export default function RestaurantLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Optional: always show header with logo */}
-      {/* <Header /> */}
+    <>
+      <ScrollToTop/>
+      <div className="min-h-screen bg-white">
+        {/* Optional: always show header with logo */}
+        {/* <Header /> */}
 
-      {/* Render child routes: Intro or Menu or Category */}
-      <Outlet />
-    </div>
+        {/* Render child routes: Intro or Menu or Category */}
+        <Outlet />
+      </div>
+    </>
   )
 }
