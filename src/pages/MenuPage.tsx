@@ -98,7 +98,7 @@ export default function MenuPage() {
               <Link
                 key={item.id}
                 to={`/restaurant-menu/${restaurant.id}/category/${item.groupId}/${item.catId}`}
-                className="flex items-center gap-4 bg-carbon-stone/80 rounded-xl p-4 hover:bg-carbon-stone transition-colors group"
+                className="flex items-center gap-4 bg-carbon-stone/80 rounded-xl p-4 hover:bg-carbon-stone transition-colors group animate-fade-in-up"
               >
                 {item.image ? (
                   <img
