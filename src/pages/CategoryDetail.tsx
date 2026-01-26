@@ -88,9 +88,11 @@ export default function CategoryDetail() {
             <div className="p-6">
               <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.name}</h3>
               {/* <p className="text-gray-800 mb-4 line-clamp-3">{item.description}</p> */}
-              <p className="text-gray-950 font-bold text-lg">
-                Rs. {item.price} {/* Add currency symbol if needed, e.g. "Rs. " */}
-              </p>
+              <div className="inline-block px-4 py-2 border-2 border-gray-900 rounded-lg bg-white shadow-sm">
+                <p className="text-gray-950 font-bold text-lg">
+                  Rs. {item.price}
+                </p>
+              </div>
             </div>
           </div>
         ))}
