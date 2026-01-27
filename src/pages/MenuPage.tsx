@@ -61,16 +61,21 @@ export default function MenuPage() {
 
       {/* Group Pills – hidden during search */}
       {!isSearching && (
-        <div className="flex justify-center gap-3 flex-wrap px-4 my-8">
+        <div className="flex justify-center gap-2 sm:gap-3 flex-wrap px-4 my-6 md:my-8">
           {groups.map((group, idx) => (
             <button
               key={group.id}
               onClick={() => handleTabChange(idx)}
-              className={`px-7 py-3 rounded-full font-medium text-base transition-all duration-300 shadow-md ${
-                activeGroup === idx
-                  ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/50 scale-105'
-                  : 'bg-[#1e1e1e] text-gray-300 hover:bg-gray-700 hover:text-white'
-              }`}
+              className={`
+                px-4 py-2 sm:px-6 sm:py-3 rounded-full font-medium text-sm sm:text-base
+                transition-all duration-300 shadow-md
+                whitespace-nowrap
+                ${
+                  activeGroup === idx
+                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/50 scale-105'
+                    : 'bg-[#1e1e1e] text-gray-300 hover:bg-gray-700 hover:text-white'
+                }
+              `}
             >
               {group.type.toUpperCase()}
             </button>

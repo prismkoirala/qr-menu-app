@@ -70,19 +70,37 @@ export default function CategoryDetail() {
         </button>
       </div>
 
-      {/* Items Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 max-w-7xl mx-auto animate-fade-in-up">
         {category.items.map(item => (
           <div
             key={item.id}
-            className="bg-carbon-stone/80 rounded-2xl overflow-hidden shadow-xl shadow-black/30 hover:shadow-carbon-fire/20 transition-all duration-300"
+            className="
+              group relative flex items-center justify-between
+              bg-white/95 dark:bg-carbon-stone/90 rounded-2xl p-6
+              shadow-lg shadow-black/10 hover:shadow-xl hover:shadow-carbon-fire/30
+              transition-all duration-300 ease-out hover:-translate-y-1
+              border border-gray-200/50 dark:border-gray-800/50
+            "
           >
-            <div className="p-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.name}</h3>
-              <div className="inline-block px-4 py-2 border-2 border-gray-900 rounded-lg bg-white shadow-sm">
-                <p className="text-gray-950 font-bold text-lg">
-                  Rs. {item.price}
-                </p>
+            {/* Left side: Name + Description */}
+            <div className="flex-1 pr-6">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-800 mb-2 group-hover:text-carbon-fire transition-colors">
+                {item.name}
+              </h3>
+              {/* <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">
+                {item.description || 'No description available'}
+              </p> */}
+            </div>
+
+            {/* Right-center: Price pill */}
+            <div className="flex-shrink-0 self-center">
+              <div className="
+                px-5 py-3 bg-gradient-to-r from-blue-400 to-blue-800
+                text-white font-bold text-lg rounded-full
+                shadow-md shadow-carbon-fire/40
+                min-w-[100px] text-center
+              ">
+                Rs. {item.price}
               </div>
             </div>
           </div>
