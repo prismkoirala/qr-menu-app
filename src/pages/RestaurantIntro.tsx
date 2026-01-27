@@ -37,9 +37,13 @@ export default function RestaurantIntro() {
         View Menu
       </Link>
 
-      {/* Footer - powered by GipEch © */}
-      <footer className="text-center text-gray-500 text-sm mt-8 pb-4">
-        Powered by GipEch © {new Date().getFullYear()}
+      {/* Footer - powered by prismco. © Year */}
+      <footer className="text-center text-gray-500 text-sm mt-8 pb-6">
+        Powered by{' '}
+        <span className="font-extrabold text-[#001f3f]">prism</span>
+        <span className="font-extrabold text-amber-600">co</span>
+        <span className="font-extrabold text-red-600">.</span>
+        {' '}© {new Date().getFullYear()}
       </footer>
       
     </div>

@@ -1,11 +1,13 @@
 // src/pages/CategoryDetail.tsx
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'  // ← added useSearchParams
 import { useSelector } from 'react-redux'
 import type { RootState } from '../store'
 
 export default function CategoryDetail() {
   const { groupId, catId, id: restaurantId } = useParams<{ groupId: string; catId: string; id: string }>()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()  // ← NEW: read current URL query params
+
   const restaurant = useSelector((state: RootState) => state.restaurant.data)
 
   if (!restaurant) {
@@ -21,8 +23,6 @@ export default function CategoryDetail() {
 
   return (
     <div className="min-h-screen pb-20 bg-white">
-      {/* <Header /> */}
-
       {/* Category Header Image Section */}
       <div className="relative w-full">
         {/* Full-width, smaller height image */}
@@ -34,10 +34,8 @@ export default function CategoryDetail() {
             (e.target as HTMLImageElement).src = 'https://via.placeholder.com/1200x400?text=No+Image'
           }}
         />
-
         {/* Bottom-to-top gradient overlay (50% coverage from bottom) */}
-        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
-
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
         {/* Category name at bottom-left */}
         <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white drop-shadow-2xl tracking-wide">
@@ -46,10 +44,14 @@ export default function CategoryDetail() {
         </div>
       </div>
 
-      {/* Back Button - round, below image */}
-      <div className="flex justify-left mt-6 ml-6 mb-10">
+      {/* Back Button - now preserves current group */}
+      <div className="flex justify-start mt-6 ml-6 mb-10">
         <button
-          onClick={() => navigate(`/restaurant-menu/${restaurantId}/menu`)}
+          onClick={() => {
+            // Read current ?group= from URL, default to 0
+            const currentGroup = searchParams.get('group') || '0'
+            navigate(`/restaurant-menu/${restaurantId}/menu?group=${currentGroup}`)
+          }}
           className="flex items-center gap-2 px-8 py-4 bg-carbon-stone hover:bg-gray-700 text-white font-medium rounded-full shadow-lg shadow-black/40 transition-all duration-300 hover:scale-105 active:scale-95"
         >
           <svg
@@ -64,6 +66,7 @@ export default function CategoryDetail() {
               clipRule="evenodd"
             />
           </svg>
+          
         </button>
       </div>
 
@@ -74,20 +77,8 @@ export default function CategoryDetail() {
             key={item.id}
             className="bg-carbon-stone/80 rounded-2xl overflow-hidden shadow-xl shadow-black/30 hover:shadow-carbon-fire/20 transition-all duration-300"
           >
-            {/* {item.image && (
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-full h-48 object-cover"
-                onError={e => {
-                  (e.target as HTMLImageElement).style.display = 'none'
-                }}
-              />
-            )} */}
-
             <div className="p-6">
               <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.name}</h3>
-              {/* <p className="text-gray-800 mb-4 line-clamp-3">{item.description}</p> */}
               <div className="inline-block px-4 py-2 border-2 border-gray-900 rounded-lg bg-white shadow-sm">
                 <p className="text-gray-950 font-bold text-lg">
                   Rs. {item.price}
