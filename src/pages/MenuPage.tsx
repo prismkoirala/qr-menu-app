@@ -1,36 +1,88 @@
 // src/pages/MenuPage.tsx
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { Link, useSearchParams } from 'react-router-dom'
-import type { RootState } from '../store'
+import type { RootState, AppDispatch } from '../store'
+import { fetchHighlightedItems, markHighlightedAsShown, markAnnouncementsAsShown } from '../features/restaurantSlice'   // ← add this import
 import Toast from '../components/Toast.tsx'
 import Header from '../components/Header.tsx'
+import HighlightedItems from '../components/HighlightedItems'                  // ← add this import
 
 export default function MenuPage() {
+  const dispatch = useDispatch<AppDispatch>()
   const restaurant = useSelector((state: RootState) => state.restaurant.data)
+  const highlightedItems = useSelector((state: RootState) => state.restaurant.highlightedItems)
+  const highlightedLoading = useSelector((state: RootState) => state.restaurant.highlightedLoading)
+  const hasShownAnnouncements = useSelector(
+    (state: RootState) => state.restaurant.hasShownAnnouncements
+  );
+
   const [searchParams, setSearchParams] = useSearchParams()
   const [activeGroup, setActiveGroup] = useState(() => {
-    // Read from URL query param on first render
     const groupFromUrl = searchParams.get('group')
     return groupFromUrl ? Number(groupFromUrl) : 0
   })
   const [search, setSearch] = useState('')
-// No useEffect needed at all
-const [activeToast, setActiveToast] = useState<number | null>(
-  restaurant?.announcements?.length ? 0 : null
-);
+  const [activeToast, setActiveToast] = useState<number | null>(null); // ← start with null always
 
+  // NEW: control dialog visibility
+  const [showHighlighted, setShowHighlighted] = useState(false)
+  // Add near the other states
+
+
+  const hasShownHighlighted = useSelector(
+  (state: RootState) => state.restaurant.hasShownHighlighted
+);
+// Fetch highlighted items once restaurant loads
+  useEffect(() => {
+    if (restaurant?.id) {
+      dispatch(fetchHighlightedItems(restaurant.id));
+    }
+  }, [restaurant?.id, dispatch]);
+
+// NEW: open dialog when data ready AND not yet shown
+  useEffect(() => {
+    if (
+      !highlightedLoading &&
+      highlightedItems.length > 0 &&
+      !hasShownHighlighted
+    ) {
+      // Defer to avoid any remaining warnings (optional but safe)
+      setTimeout(() => {
+        setShowHighlighted(true);
+        dispatch(markHighlightedAsShown());   // ← mark it in Redux
+      }, 0);
+    }
+  }, [highlightedLoading, highlightedItems.length, hasShownHighlighted, dispatch]);
+
+  // ── Auto-start announcements only once (respect Redux flag) ──────
+  useEffect(() => {
+    // Only attempt to start if we have announcements and haven't shown them yet
+    if (
+      restaurant?.announcements?.length &&
+      !hasShownAnnouncements &&
+      activeToast === null
+    ) {
+      setTimeout(() => {
+        setActiveToast(0);                     // start first toast
+        dispatch(markAnnouncementsAsShown());  // mark globally as shown
+      }, 0);
+    }
+  }, [
+    restaurant?.announcements?.length,
+    hasShownAnnouncements,
+    activeToast,
+    dispatch,
+  ]);
 
   const handleToastClose = () => {
     if (activeToast !== null && activeToast < (restaurant?.announcements?.length || 0) - 1) {
-      // Show next announcement after closing current one
       setActiveToast(activeToast + 1)
     } else {
       setActiveToast(null)
     }
   }
 
-  // Update URL when group changes
   const handleTabChange = (idx: number) => {
     setActiveGroup(idx)
     setSearchParams({ group: idx.toString() })
@@ -41,14 +93,11 @@ const [activeToast, setActiveToast] = useState<number | null>(
   }
 
   const groups = restaurant.menu_groups || []
-
   const currentGroup = groups[activeGroup] || groups[0]
-
   const filteredCategories = currentGroup?.categories?.filter(cat =>
     cat.name.toLowerCase().includes(search.toLowerCase())
   ) ?? []
 
-  // Global search: all items across all groups
   const allItems = groups.flatMap(group =>
     group.categories.flatMap(cat =>
       cat.items.map(item => ({
@@ -95,8 +144,6 @@ const [activeToast, setActiveToast] = useState<number | null>(
               {group.type.toUpperCase()}
             </button>
           ))}
-
-
         </div>
       )}
 
@@ -107,7 +154,6 @@ const [activeToast, setActiveToast] = useState<number | null>(
           message={ann.message}
           duration={12000}
           onClose={handleToastClose}
-          // Only show current active toast
           className={index === activeToast ? 'block' : 'hidden'}
         />
       ))}
@@ -131,9 +177,8 @@ const [activeToast, setActiveToast] = useState<number | null>(
         )}
       </div>
 
-      {/* Content */}
+      {/* Content – same as before */}
       {isSearching ? (
-        // Global Item Results
         <div className="max-w-4xl mx-auto px-4 space-y-4">
           {filteredItems.length === 0 ? (
             <p className="text-center py-16 text-gray-500 text-lg">
@@ -171,7 +216,6 @@ const [activeToast, setActiveToast] = useState<number | null>(
           )}
         </div>
       ) : (
-        // Category Grid - 2 columns on mobile
         <div
           key={activeGroup}
           className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 px-4 max-w-7xl mx-auto animate-fade-in-up"
@@ -185,16 +229,16 @@ const [activeToast, setActiveToast] = useState<number | null>(
               <Link
                 key={cat.id}
                 to={`/restaurant-menu/${restaurant.id}/category/${currentGroup.id}/${cat.id}?group=${activeGroup}`}
-                className="
+                className={`
                   group relative rounded-xl overflow-hidden
                   shadow-xl shadow-black/20
                   hover:shadow-blue-500/30 hover:shadow-2xl
                   transition-all duration-500 ease-out
                   hover:-translate-y-2
                   aspect-[4/3.5]
-                "
+                `}
               >
-                <img
+                                <img
                   src={cat.image}
                   alt={cat.name}
                   className="
@@ -229,6 +273,13 @@ const [activeToast, setActiveToast] = useState<number | null>(
           )}
         </div>
       )}
+
+      {/* Today's Special Dialog – auto-opens if there are items */}
+      <HighlightedItems
+        open={showHighlighted}
+        onClose={() => setShowHighlighted(false)}
+        restaurantId={restaurant.id}
+      />
     </div>
   )
 }

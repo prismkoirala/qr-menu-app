@@ -47,6 +47,7 @@ export default function RestaurantLayout() {
   return (
     <>
       <ScrollToTop/>
+      
       <div className="min-h-screen bg-white">
         {/* Optional: always show header with logo */}
         {/* <Header /> */}
