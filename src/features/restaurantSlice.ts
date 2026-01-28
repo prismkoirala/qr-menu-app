@@ -7,6 +7,17 @@ const BASE_URL = import.meta.env.DEV
   ? '/api/restaurants/'                    // dev: uses Vite proxy → backend 8000
   : (import.meta.env.VITE_API_URL || 'https://gipech.pythonanywhere.com') + '/api/restaurants/'
 
+
+  interface Announcements {
+  id: number
+  title: string
+  message: string
+  start_date: string
+  end_date: string
+  is_active: number
+  created_at: number
+  updated_at: number
+}
 interface MenuItem {
   id: number
   name: string
@@ -36,6 +47,7 @@ interface Restaurant {
   name: string
   address: string
   phone: string
+  announcements: Announcements[]
   logo: string
   facebook_url: string
   instagram_url: string

@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Link, useSearchParams } from 'react-router-dom'
 import type { RootState } from '../store'
+import Toast from '../components/Toast.tsx'
 import Header from '../components/Header.tsx'
 
 export default function MenuPage() {
@@ -14,6 +15,20 @@ export default function MenuPage() {
     return groupFromUrl ? Number(groupFromUrl) : 0
   })
   const [search, setSearch] = useState('')
+// No useEffect needed at all
+const [activeToast, setActiveToast] = useState<number | null>(
+  restaurant?.announcements?.length ? 0 : null
+);
+
+
+  const handleToastClose = () => {
+    if (activeToast !== null && activeToast < (restaurant?.announcements?.length || 0) - 1) {
+      // Show next announcement after closing current one
+      setActiveToast(activeToast + 1)
+    } else {
+      setActiveToast(null)
+    }
+  }
 
   // Update URL when group changes
   const handleTabChange = (idx: number) => {
@@ -80,8 +95,22 @@ export default function MenuPage() {
               {group.type.toUpperCase()}
             </button>
           ))}
+
+
         </div>
       )}
+
+      {restaurant?.announcements?.map((ann, index) => (
+        <Toast
+          key={ann.id}
+          title={ann.title}
+          message={ann.message}
+          duration={12000}
+          onClose={handleToastClose}
+          // Only show current active toast
+          className={index === activeToast ? 'block' : 'hidden'}
+        />
+      ))}
 
       {/* Search Bar */}
       <div className="max-w-2xl mx-auto px-4 mb-10 relative">
@@ -121,7 +150,7 @@ export default function MenuPage() {
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
+                    className="w-20 h-20 object-cover rounded-lg shrink-0"
                     onError={e => (e.currentTarget.style.display = 'none')}
                   />
                 ) : (
@@ -178,7 +207,7 @@ export default function MenuPage() {
                     (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x350?text=No+Image'
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
                 <div className="absolute inset-0 flex items-center justify-center px-4">
                   <h3
                     className="
