@@ -225,51 +225,84 @@ export default function MenuPage() {
               No matching categories
             </p>
           ) : (
-            filteredCategories.map(cat => (
-              <Link
-                key={cat.id}
-                to={`/restaurant-menu/${restaurant.id}/category/${currentGroup.id}/${cat.id}?group=${activeGroup}`}
-                className={`
-                  group relative rounded-xl overflow-hidden
-                  shadow-xl shadow-black/20
-                  hover:shadow-blue-500/30 hover:shadow-2xl
-                  transition-all duration-500 ease-out
-                  hover:-translate-y-2
-                  aspect-[4/3.5]
-                `}
-              >
-                                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  className="
-                    absolute inset-0 w-full h-full object-cover
-                    transition-transform duration-700 ease-out
-                    group-hover:scale-110
-                    brightness-90 group-hover:brightness-75
-                  "
-                  onError={e => {
-                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x350?text=No+Image'
-                  }}
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center px-4">
-                  <h3
-                    className="
-                      text-lg sm:text-xl md:text-2xl font-bold text-white text-center tracking-wide
-                      drop-shadow-2xl
-                      transition-all duration-300
-                      group-hover:drop-shadow-[0_6px_12px_rgba(0,0,0,0.8)]
-                    "
-                    style={{
-                      textShadow: '0 3px 10px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.9)',
-                      WebkitTextStroke: '0.6px black',
+            filteredCategories.map(cat => {
+              const isDisabled = cat.is_disabled
+
+              const cardContent = (
+                <>
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className={`
+                      absolute inset-0 w-full h-full object-cover
+                      transition-transform duration-700 ease-out
+                      ${isDisabled 
+                        ? 'grayscale brightness-50' 
+                        : 'group-hover:scale-110 brightness-90 group-hover:brightness-75'
+                      }
+                    `}
+                    onError={e => {
+                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x350?text=No+Image'
                     }}
-                  >
-                    {cat.name}
-                  </h3>
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center px-4">
+                    <h3
+                      className={`
+                        text-lg sm:text-xl md:text-2xl font-bold text-center tracking-wide
+                        drop-shadow-2xl
+                        transition-all duration-300
+                        ${isDisabled 
+                          ? 'text-gray-400' 
+                          : 'text-white group-hover:drop-shadow-[0_6px_12px_rgba(0,0,0,0.8)]'
+                        }
+                      `}
+                      style={{
+                        textShadow: '0 3px 10px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.9)',
+                        WebkitTextStroke: '0.6px black',
+                      }}
+                    >
+                      {cat.name}
+                    </h3>
+                    {isDisabled && (
+                      <span className="mt-2 px-3 py-1 bg-red-600/80 text-white text-xs font-semibold rounded-full">
+                        Unavailable
+                      </span>
+                    )}
+                  </div>
+                </>
+              )
+
+              return isDisabled ? (
+                <div
+                  key={cat.id}
+                  className="
+                    group relative rounded-xl overflow-hidden
+                    shadow-xl shadow-black/20
+                    aspect-[4/3.5]
+                    cursor-not-allowed
+                    opacity-70
+                  "
+                >
+                  {cardContent}
                 </div>
-              </Link>
-            ))
+              ) : (
+                <Link
+                  key={cat.id}
+                  to={`/restaurant-menu/${restaurant.id}/category/${currentGroup.id}/${cat.id}?group=${activeGroup}`}
+                  className="
+                    group relative rounded-xl overflow-hidden
+                    shadow-xl shadow-black/20
+                    hover:shadow-blue-500/30 hover:shadow-2xl
+                    transition-all duration-500 ease-out
+                    hover:-translate-y-2
+                    aspect-[4/3.5]
+                  "
+                >
+                  {cardContent}
+                </Link>
+              )
+            })
           )}
         </div>
       )}

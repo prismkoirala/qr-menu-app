@@ -39,6 +39,7 @@ interface Category {
   name: string
   image: string
   cat_order: number
+  is_disabled: boolean
   items: MenuItem[]
 }
 
