@@ -71,40 +71,59 @@ export default function CategoryDetail() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 max-w-7xl mx-auto animate-fade-in-up">
-        {category.items.map(item => (
-          <div
-            key={item.id}
-            className="
-              group relative flex items-center justify-between
-              bg-white/95 dark:bg-carbon-stone/90 rounded-2xl p-6
-              shadow-lg shadow-black/10 hover:shadow-xl hover:shadow-carbon-fire/30
-              transition-all duration-300 ease-out hover:-translate-y-1
-              border border-gray-200/50 dark:border-gray-800/50
-            "
-          >
-            {/* Left side: Name + Description */}
-            <div className="flex-1 pr-6">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-800 mb-2 group-hover:text-carbon-fire transition-colors">
-                {item.name}
-              </h3>
-              {/* <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3">
-                {item.description || 'No description available'}
-              </p> */}
-            </div>
+        {category.items.map(item => {
+          const isDisabled = item.is_disabled
 
-            {/* Right-center: Price pill */}
-            <div className="flex-shrink-0 self-center">
-              <div className="
-                px-5 py-3 bg-gradient-to-r from-blue-400 to-blue-800
-                text-white font-bold text-lg rounded-full
-                shadow-md shadow-carbon-fire/40
-                min-w-[100px] text-center
-              ">
-                Rs. {item.price}
+          return (
+            <div
+              key={item.id}
+              className={`
+                group relative flex items-center justify-between
+                rounded-2xl p-6
+                transition-all duration-300 ease-out
+                border
+                ${isDisabled
+                  ? 'bg-gray-100 dark:bg-gray-800/50 border-gray-300/50 dark:border-gray-700/50 opacity-70'
+                  : 'bg-white/95 dark:bg-carbon-stone/90 shadow-lg shadow-black/10 hover:shadow-xl hover:shadow-carbon-fire/30 hover:-translate-y-1 border-gray-200/50 dark:border-gray-800/50'
+                }
+              `}
+            >
+              {/* Disabled badge */}
+              {isDisabled && (
+                <div className="absolute -top-2 -right-2 px-2 py-1 bg-red-500 text-white text-xs font-semibold rounded-full shadow-md">
+                  Unavailable
+                </div>
+              )}
+
+              {/* Left side: Name + Description */}
+              <div className="flex-1 pr-6">
+                <h3 className={`
+                  text-xl font-semibold mb-2 transition-colors
+                  ${isDisabled
+                    ? 'text-gray-500 dark:text-gray-500'
+                    : 'text-gray-900 dark:text-gray-800 group-hover:text-carbon-fire'
+                  }
+                `}>
+                  {item.name}
+                </h3>
+              </div>
+
+              {/* Right-center: Price pill */}
+              <div className="shrink-0 self-center">
+                <div className={`
+                  px-5 py-3 font-bold text-lg rounded-full
+                  min-w-[100px] text-center
+                  ${isDisabled
+                    ? 'bg-gray-400 text-gray-200'
+                    : 'bg-gradient-to-r from-blue-400 to-blue-800 text-white shadow-md shadow-carbon-fire/40'
+                  }
+                `}>
+                  Rs. {item.price}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

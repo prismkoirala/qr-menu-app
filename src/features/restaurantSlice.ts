@@ -32,6 +32,7 @@ interface MenuItem {
   price: string
   image: string
   item_order: number
+  is_disabled: boolean
 }
 
 interface Category {
